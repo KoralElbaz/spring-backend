@@ -1,5 +1,7 @@
 package com.basic.basic.service;
 
+import com.basic.basic.dto.StudentCreateRequest;
+import com.basic.basic.dto.StudentResponseDto;
 import com.basic.basic.model.Student;
 import com.basic.basic.repository.StudentRepository;
 import org.springframework.stereotype.Service;
@@ -15,30 +17,72 @@ public class StudentService {
         this.repository = repository;
     }
 
-    public List<Student> getAll() {
-        return repository.findAll();
+    // ----------------------
+    // GET ALL
+    // ----------------------
+    public List<StudentResponseDto> getAll() {
+        return repository.findAll()
+                .stream()
+                .map(this::toResponseDto)
+                .toList();
     }
 
-    public Student getById(String id) {
-        return repository.findById(id)
+    // ----------------------
+    // GET BY ID
+    // ----------------------
+    public StudentResponseDto getById(String id) {
+        Student student = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Student not found"));
+        return toResponseDto(student);
     }
 
-    public Student create(Student student) {
-        return repository.save(student);
+    // ----------------------
+    // CREATE
+    // ----------------------
+    public StudentResponseDto create(StudentCreateRequest request) {
+
+        Student student = new Student(
+                request.getName(),
+                request.getEmail(),
+                request.getAge()
+        );
+
+        Student saved = repository.save(student);
+        return toResponseDto(saved);
     }
 
-    public Student update(String id, Student updated) {
-        Student existing = getById(id);
+    // ----------------------
+    // UPDATE
+    // ----------------------
+    public StudentResponseDto update(String id, StudentCreateRequest updated) {
+
+        Student existing = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Student not found"));
 
         existing.setName(updated.getName());
         existing.setEmail(updated.getEmail());
         existing.setAge(updated.getAge());
 
-        return repository.save(existing);
+        Student saved = repository.save(existing);
+        return toResponseDto(saved);
     }
 
+    // ----------------------
+    // DELETE
+    // ----------------------
     public void delete(String id) {
         repository.deleteById(id);
+    }
+
+    // ----------------------
+    // MAPPER: MODEL → DTO
+    // ----------------------
+    private StudentResponseDto toResponseDto(Student s) {
+        return new StudentResponseDto(
+                s.getId(),
+                s.getName(),
+                s.getEmail(),
+                s.getAge()
+        );
     }
 }
