@@ -2,10 +2,13 @@ package com.basic.basic.service;
 
 import com.basic.basic.dto.StudentCreateRequest;
 import com.basic.basic.dto.StudentResponseDto;
+import com.basic.basic.exception.StudentNotFoundException;
 import com.basic.basic.mapper.StudentMapper;
 import com.basic.basic.model.Student;
 import com.basic.basic.repository.StudentRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -35,7 +38,7 @@ public class StudentService {
     // ----------------------
     public StudentResponseDto getById(String id) {
         Student student = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Student not found"));
+                .orElseThrow(() -> new StudentNotFoundException(id));
         return mapper.toDto(student);
     }
 

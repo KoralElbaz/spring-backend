@@ -4,7 +4,6 @@ import com.basic.basic.dto.StudentCreateRequest;
 import com.basic.basic.dto.StudentResponseDto;
 import com.basic.basic.model.Student;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface StudentMapper {
