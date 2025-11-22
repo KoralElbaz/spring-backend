@@ -2,6 +2,7 @@ package com.basic.basic.service;
 
 import com.basic.basic.dto.StudentCreateRequest;
 import com.basic.basic.dto.StudentResponseDto;
+import com.basic.basic.mapper.StudentMapper;
 import com.basic.basic.model.Student;
 import com.basic.basic.repository.StudentRepository;
 import org.springframework.stereotype.Service;
@@ -12,9 +13,11 @@ import java.util.List;
 public class StudentService {
 
     private final StudentRepository repository;
+    private final StudentMapper mapper;
 
-    public StudentService(StudentRepository repository) {
+    public StudentService(StudentRepository repository, StudentMapper mapper) {
         this.repository = repository;
+        this.mapper = mapper;
     }
 
     // ----------------------
@@ -23,7 +26,7 @@ public class StudentService {
     public List<StudentResponseDto> getAll() {
         return repository.findAll()
                 .stream()
-                .map(this::toResponseDto)
+                .map(mapper::toDto)
                 .toList();
     }
 
@@ -33,7 +36,7 @@ public class StudentService {
     public StudentResponseDto getById(String id) {
         Student student = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Student not found"));
-        return toResponseDto(student);
+        return mapper.toDto(student);
     }
 
     // ----------------------
@@ -41,14 +44,9 @@ public class StudentService {
     // ----------------------
     public StudentResponseDto create(StudentCreateRequest request) {
 
-        Student student = new Student(
-                request.getName(),
-                request.getEmail(),
-                request.getAge()
-        );
-
+        Student student = mapper.toEntity(request);
         Student saved = repository.save(student);
-        return toResponseDto(saved);
+        return mapper.toDto(saved);
     }
 
     // ----------------------
@@ -64,7 +62,7 @@ public class StudentService {
         existing.setAge(updated.getAge());
 
         Student saved = repository.save(existing);
-        return toResponseDto(saved);
+        return mapper.toDto(saved);
     }
 
     // ----------------------
@@ -72,17 +70,5 @@ public class StudentService {
     // ----------------------
     public void delete(String id) {
         repository.deleteById(id);
-    }
-
-    // ----------------------
-    // MAPPER: MODEL → DTO
-    // ----------------------
-    private StudentResponseDto toResponseDto(Student s) {
-        return new StudentResponseDto(
-                s.getId(),
-                s.getName(),
-                s.getEmail(),
-                s.getAge()
-        );
     }
 }
