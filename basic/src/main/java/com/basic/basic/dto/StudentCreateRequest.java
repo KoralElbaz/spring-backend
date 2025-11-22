@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 
+
 public class StudentCreateRequest {
 
     @NotBlank
@@ -31,4 +32,17 @@ public class StudentCreateRequest {
     public String getEmail() { return email; }
 
     public int getAge() { return age; }
+
+    // setters
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
 }
