@@ -21,6 +21,14 @@ public class Student {
         this.age = age;
     }
 
+    public Student(String id, String name, String email, int age) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.age = age;
+    }
+
+
     // Getters & Setters
     public String getId() { return id; }
 
